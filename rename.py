@@ -1,32 +1,38 @@
 import sys
-from os import rename, listdir
 import os
+import shutil
+from os import rename, listdir
 
-rootPath = 'C:\\Users\\조수장\\Desktop\\project\\crawling_example\\dataset\\data'
-label_list = ['angry', 'sadness', 'happiness', 'surprised', 'afraid', 'neutral', 'tired', 'wonder', 'etc']
+def createFolder(directory):
+    try:
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+    except OSError:
+        print('Error: Creating directory. ' + directory)
+        
+# setting
+base_path = 'C:/Users/jsj/Desktop/project/look_like_dog/dataset/' + 'labels'
+folder_list = os.listdir(base_path)
 
-for label in label_list:
-    filePath = rootPath + '\\' + label + '\\'
-    files = listdir(filePath)
+train_path = 'C:/Users/jsj/Desktop/project/look_like_dog/dataset/' + 'train_set'
+createFolder(train_path)
 
-    n = 1
-    cnt = 0
-    for f in files:
-        src = os.path.join(filePath, f)
-        dst = label + '_' + str(n) + '.jpg'
-        dst = os.path.join(filePath, dst)
-        while(os.path.isfile(dst)):
-            n += 1
-            dst = label + '_' + str(n) + '.jpg'
-            dst = os.path.join(filePath, dst)
-        os.rename(src, dst)
-        n += 1
-        cnt += 1
 
-    print('['+ label + ']' + ' data is ' + str(cnt))
+# copy and rename
+for folder in folder_list:
+    folder_path = base_path + '/' + folder
+    if not os.path.isdir(folder_path):
+        continue
     
+    dst_path = train_path + '/' + folder
+    createFolder(dst_path)
+    
+    file_list = os.listdir(folder_path)
+    n = 1
+    for file in file_list:
+        src = folder_path + '/' + file
+        dst = dst_path + '/' + str(n) + '.jpg'
+        shutil.copy(src, dst)    
+        n += 1
 
-
-
-
-
+print('rename and copy complete!!')
